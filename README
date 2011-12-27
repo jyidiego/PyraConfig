@@ -1,0 +1,83 @@
+Overview
+Pyratemp is a python templating engine written by Roland Koebler.
+(http://www.simple-is-better.org/template/pyratemp.html) Pyratemp's compact
+footprint makes it extremely easy to deploy throughout an enterprise.
+Also, because the code is clean and straightforward, making modifications and
+customizing Pyratemp should be easier than some of the other Python templating
+engines. The idea is to use the HPSA model to deliver an alternative application
+configuration from the one that comes with HPSA*. This was inspired by puppet
+and chef's idea of using ERB to do configuration templating. This module uses
+JSON as a data-interchange format to deliver configuration data to Pyratemp.
+JSON has wide support of many languages plus the standard data-interchange
+format should make it easy to migrate to another system configuration tool
+should that happen in the future. Below is a quick list of features over HPSA's
+application configuration:
+
+    * An easier and more intuitive syntax for creating configuration templates.
+    * A more straightforward approach to defining valuesets. (called datasets)
+    * Makes use of custom attributes and their hierarchies for data inheritance.
+    * Uses the HPSA model to deliver configuration files.
+    * Better visibility into errors and post execution failures of a configuration.
+    * Utilities on the managed server to help develop the configuration.
+
+Definitions
+metaconfig - contains metadata about a configuration such as configuration file path, permissions, owner/group,
+template file/custom attribute name, dataset file/custom attribute name, and post installation execution.
+It is stored in a json format.
+template - a file or custom attribute that contains a modeled configuration file. the templating language is pyratemp
+( http://www.simple-is-better.org/template/pyratemp.html )
+dataset - a file or custom attribute that contain the data elements that dynamically fill in or manipulate the marked
+up portions of a template. It is stored in a json format (supports yaml as well).
+
+Custom Attribute Naming Conventions
+Because the metaconfig, templates, and datesets are all custom attributes it will be necessary to enforce some naming conventions.
+This will also help make it easier to implement future features. The following is the naming convention that custom attributes must
+follow for their given role (the text in bold is the required extension):
+
+    metaconfig - must have a .metaconf extension
+    template - must have a .template extension
+    dataset - must have either a .json or a .yaml extension
+
+If the naming conventions above aren't followed then the configuration will fail to be delivered.
+Example Pyratemp Configurations
+Examples of pyratemp configurations are kept in the following folder structure:
+/WebMD_Operations/shared/Pyratemp
+Creating a configuration
+The following outlines the steps for defining a configuration
+
+   1. Create a new software policy.
+   2. Add a custom attribute on the software policy to hold the metaconfiguration.
+   3. Add a custom attribute on the software policy to hold the dataset (To read from a file use the key 'datasetFile').
+   4. Create the configuration template. (To read from a file use the key 'templateFile'.)
+   5. Add server script to generate the new configuration.
+
+So let's go through the steps for creating a configuration. Once the software policy is created you would add the custom attribute
+that hold the meta-configuration:
+   example.metaconf =>
+                       { "configs" :
+                                [ { "configFile" : "/tmp/example.cfg",
+                                    "dataset" : "example.json",
+                                    "template" : "example.template",
+                                    "perms" : "644",
+                                    "og" : "root:root" } ],
+                                    "execute" : ["ls -l"]
+                        }
+Here metaconfig is a custom attribute that contains the JSON for defining the configuration. Once the metaconfig has been defined the
+template and dataset needs to be defined. Although the template does not have to come from the custom attribute we'll show that here
+for to illustrate what it will look like.
+    example.json => { "value1" : 1, "value2" : 2, "empty" : "" }
+
+Here the dataset contains three values, 2 integers and an empty string. The template will look like this.
+    example.template =>
+        value1=$!value1!$
+        value2=$!value2!$
+        empty=$!empty!$
+
+Once the template is defined the last part is adding the server script that will generate the configuration file for us. The server script will be either a Windows or a Unix server script. Their names are "Configuration Generator - Unix" and "Configuration Generator - Windows". Once these server scripts are added to the software policy, the policy is remediated on the server and this would then deliver the configurations. For more details on the pyratemp templating syntax please refer to:
+http://www.simple-is-better.org/template/pyratemp.html
+The URL above is a complete reference to the templating syntax. As an additional note, because this templating engine is being used for text configurations, you should use the $!EXPRESSION!$ as this does not attempt to escape special html characters (i.e. <,>,&,',")
+
+* HPSA's appconfig uses a domain specific language called CML. In theory it is a
+generalized language to allow users to model any configuration file, however in
+practice it is both cumbersome and difficult to learn.
+
