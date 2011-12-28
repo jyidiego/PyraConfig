@@ -3,7 +3,7 @@ PyraConfig contains two files, confgen.py and confman.py. confgen.py is a
 command line interface into confman.py and confman.py imports pyratemp.
 Configuration files are created by running confgen.py. All of this
 was meant to work with Opsware/HP Server Automation but hopefully the idea of
-what this was supposed to do can be generalized to any other configuration tool
+what this was supposed to do can be contrasted to other configuration tools
 (i.e. puppet or chef.) Pyratemp is a python templating engine written by
 Roland Koebler. (http://www.simple-is-better.org/template/pyratemp.html)
 Pyratemp's compact footprint makes it extremely easy to deploy throughout an
