@@ -39,10 +39,7 @@ follow for their given role (the text in bold is the required extension):
     dataset - must have either a .json or a .yaml extension
 
 If the naming conventions above aren't followed then the configuration will fail to be delivered.
-Example Pyratemp Configurations
-Examples of pyratemp configurations are kept in the following folder structure:
-/WebMD_Operations/shared/Pyratemp
-Creating a configuration
+
 The following outlines the steps for defining a configuration
 
    1. Create a new software policy.

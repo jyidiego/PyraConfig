@@ -25,7 +25,7 @@ elif re.search('(?i)window',platform.platform()):
     smopython2 = 'C:\\Program Files\\Opsware\\smopython2'
     sys.path.append('C:\\Program Files\\Opsware\\agent\\pylibs')
     sys.path.append('C:\\Program Files\\Opsware\\smopylibs2')
-    site.addsitedir('C:\\Program Files\\Opsware\\sm\\webmd.config.deployment\\pyratemp\\yaml.2.4.4.zip')
+    site.addsitedir('C:\\Program Files\\Opsware\\sm\\config.deployment\\pyratemp\\yaml.2.4.4.zip')
     smopy2dir = [ dir for dir in os.listdir(smopython2) if os.path.isdir(os.path.join(smopython2,dir)) ][-1:][0]
     site.addsitedir(os.path.join('C:\\Program Files\\Opsware\\smopython2',smopy2dir,'Lib\\site-packages'))
     import simplejson
